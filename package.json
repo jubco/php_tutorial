@@ -1,0 +1,23 @@
+{
+  "name": "php_tutorial",
+  "version": "1.0.0",
+  "description": "php_tutorial",
+  "main": "1_server.js",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jubco/php_tutorial.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jubco/php_tutorial/issues"
+  },
+  "homepage": "https://github.com/jubco/php_tutorial#readme"
+}

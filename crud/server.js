@@ -1,32 +1,30 @@
 const util = require('util'); // for string formatting
 const express = require('express'); 
-var welcome = "Hello welcome to my page";
-
-// Middleware to process form data
-// Need to register via use method of express
-// Need to register before using it. 
-const bodyParser = require('body-parser');
-
+const ejs = require('ejs'); // emeeded js as a template engine.
+const bodyParser = require('body-parser'); // to parse form data.
 
 // Instance of express is an app
 const app = express() 
 
+// application settings
+app.set('port', process.env.PORT || 3000) //port
+// app.set('views', __dirname + '/views') // public folder
+app.set('view engine', 'ejs') // use ejs as template engine
 
-// Mongodb, require to connect with mongodb server.
-const mongoClient = require('mongodb').MongoClient;
-const username = process.env.DB_USERNAME || "express";
-const password = process.env.DB_PASSWORD || "express";
-const db_name = process.env.DB_NAME || "express"
-
-// db_url to connect to database.
-const db_url = util.format("mongodb://%s:%s@ds225308.mlab.com:25308/%s", username, password, db_name)
-
-
+// Register middleware 
 // Register all middleware here.
 app.use(bodyParser.urlencoded({
-	extended: true
+  extended: true
 }))
 
+// Database setup 
+const mongoClient = require('mongodb').MongoClient; // mongodb as db
+const username = process.env.DB_USERNAME || "express"; // mongdb username
+const password = process.env.DB_PASSWORD || "express"; // mongodb password
+const db_name = process.env.DB_NAME || "express"
+
+// db url 
+const db_url = util.format("mongodb://%s:%s@ds225308.mlab.com:25308/%s", username, password, db_name)
 
 // Connect to database and start the server.
 // connect to database
@@ -40,16 +38,15 @@ mongoClient.connect(db_url, (err, client) => {
 });
 
 
-// Lets define some routing path.
-// Home Page
+
+// Routing here. 
 app.get('/', function(request, response){
 	response.sendFile(__dirname + '/templates/form.html')
-
 });
 
 // About page
 app.get('/about', (req, res) => {
-	res.send(welcome);
+	res.send("Hello world");
 });
 
 
@@ -67,7 +64,7 @@ app.post('/quotes', (req, res) => {
 
 	db.collection('quotes').save(req.body, (err, data) => {
 		if (err) console.log("Couldn't save to db", err);
-		res.redirect('/');
+		res.redirect('/quotes');
 
 	});
 
@@ -82,14 +79,21 @@ app.get('/quotes', (req, res) => {
 	var cursor = db.collection('quotes').find().toArray(function(err, results){
 
 	// Lets create some template 
-	var htmlString="";
-	results.forEach(function(result) {
-		htmlString += util.format("<li>%s by %s</li>", result.name, result.quote);
-	});
+//	var htmlString="";
+//	results.forEach(function(result) {
+//		htmlString += util.format("<li>%s by %s</li>", result.name, result.quote);
+//	});
+//
+//	console.log(htmlString);
+// Send the result to the browser.
+// 	res.send(htmlString);
 
-	console.log(htmlString);
-	// Send the result to the browser.
-	res.send(htmlString);
+// render the result in template using set method of ejs.
+
+		// res.render('templates/quotes.html', results);
+
+		res.render('quotes.ejs', {quotes:results}); // quotes.html must inside views function.
+
 	});
 
 });
